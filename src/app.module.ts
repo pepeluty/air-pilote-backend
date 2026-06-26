@@ -4,6 +4,7 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { defineConfig, UnderscoreNamingStrategy } from '@mikro-orm/postgresql';
 import { Migrator } from '@mikro-orm/migrations';
 import { IdentityModule } from './contexts/identity/infrastructure/nest-identity.module';
+import { GameRecordsModule } from './contexts/game-records/infrastructure/nest-game-records.module';
 import { AuthGuard } from './shared/AuthGuard';
 
 /**
@@ -41,6 +42,7 @@ import { AuthGuard } from './shared/AuthGuard';
       }),
     ),
     IdentityModule,
+    GameRecordsModule,
   ],
   providers: [AuthGuard, { provide: APP_GUARD, useClass: AuthGuard }],
 })

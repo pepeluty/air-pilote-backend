@@ -35,6 +35,16 @@ import {
 /** Cookie name carrying the access token (Decision #6 — cookie delivery). */
 export const ACCESS_TOKEN_COOKIE = 'access_token';
 
+/**
+ * The authenticated principal attached to `request.user` after the guard
+ * passes. Controllers read `req.user.userId` to scope per-caller operations
+ * (e.g. game-records history/high-score are ALWAYS the caller's own — never
+ * another userId, satisfying "Cannot access other players' records").
+ */
+export interface AuthenticatedUser {
+  readonly userId: string;
+}
+
 /** NestJS injection token for the optional public-routes metadata. */
 export const IS_PUBLIC_KEY = Symbol('IS_PUBLIC');
 
@@ -74,6 +84,11 @@ export class AuthGuard implements CanActivate {
     if (!exists) {
       throw new NonExistentUserError('user_no_longer_exists');
     }
+    // Expose the authenticated principal so protected controllers can scope
+    // per-caller reads/writes (game-records: history/high-score use the
+    // caller's userId, never a body-supplied id — "Cannot access other
+    // players' records").
+    (request as Request & { user?: AuthenticatedUser }).user = { userId };
     return true;
   }
 
