@@ -116,7 +116,17 @@ module.exports = {
               {
                 group: ['@nestjs/*', '@mikro-orm/*'],
                 message:
-                  'Shared-kernel ports and errors MUST stay framework-agnostic (no @nestjs/* or @mikro-orm/*).',
+                  'Shared-kernel ports, errors, and base classes MUST stay framework-agnostic (no @nestjs/* or @mikro-orm/*).',
+              },
+              {
+                group: ['**/infrastructure/**', '../infrastructure/**', '../../infrastructure/**'],
+                message:
+                  'Shared kernel MUST NOT import from infrastructure (inverse dependency).',
+              },
+              {
+                group: ['**/infrastructure/*', '../infrastructure', '../infrastructure/*'],
+                message:
+                  'Shared kernel MUST NOT import from infrastructure (inverse dependency).',
               },
             ],
           },
