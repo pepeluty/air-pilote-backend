@@ -63,9 +63,13 @@ export class RefreshToken extends Entity<string> {
   }
 
   /**
-   * Transition `issued -> rotated`, recording the new hash that supersedes
-   * this token. Throws on any other source status — only an `issued` token may
-   * be rotated. Returns a NEW {@link RefreshToken} (immutable transition).
+   * Transition `issued -> rotated`. The row's own `hash` is IMMUTABLE so a
+   * re-presented (replayed) token can still be found by `findByHash` and flagged
+   * as reused via its `rotated` status. The `newHash` argument is the successor
+   * token's hash — validated for presence and carried for audit reasoning, but
+   * NOT stored on this row (the chain is captured by the successor row's
+   * `parentTokenHash` pointing back at this row's hash). Throws on any source
+   * status other than `issued`. Returns a NEW {@link RefreshToken}.
    */
   markRotated(newHash: string): RefreshToken {
     if (this.status !== 'issued') {
@@ -76,10 +80,10 @@ export class RefreshToken extends Entity<string> {
     if (typeof newHash !== 'string' || newHash.length === 0) {
       throw new Error('rotate_new_hash_required');
     }
+    // status transitions issued -> rotated; hash is preserved (see jsdoc).
     return new RefreshToken({
       ...this.toProps(),
       status: 'rotated',
-      hash: newHash,
     });
   }
 
