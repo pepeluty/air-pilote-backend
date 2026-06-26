@@ -1,0 +1,58 @@
+{
+  "name": "air-pilote-backend",
+  "version": "0.1.0",
+  "description": "Air-Pilote backend — NestJS + PostgreSQL + Hexagonal/DDD (identity & game-records contexts)",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "node dist/main.js",
+    "start:dev": "nest start --watch",
+    "build": "nest build",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "lint:check": "eslint \"{src,apps,libs,test}/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\""
+  },
+  "dependencies": {
+    "@mikro-orm/core": "^6.3.13",
+    "@mikro-orm/migrations": "^6.3.13",
+    "@mikro-orm/nestjs": "^6.0.6",
+    "@mikro-orm/postgresql": "^6.3.13",
+    "@nestjs/common": "^11.0.20",
+    "@nestjs/core": "^11.0.20",
+    "@nestjs/platform-express": "^11.0.20",
+    "argon2": "^0.41.1",
+    "jsonwebtoken": "^9.0.2",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^11.0.6",
+    "@nestjs/testing": "^11.0.20",
+    "@types/argon2": "^0.15.2",
+    "@types/jest": "^29.5.12",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^22.10.5",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.1",
+    "jest": "^29.7.0",
+    "testcontainers": "^10.18.0",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  },
+  "jest": {
+    "moduleFileExtensions": ["js", "json", "ts"],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": ["**/*.(t|j)s"],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  }
+}
