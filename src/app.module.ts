@@ -31,8 +31,8 @@ import { AuthGuard } from './shared/AuthGuard';
         dbName: process.env.PG_DB ?? 'air-pilote',
         user: process.env.PG_USER ?? 'postgres',
         password: process.env.PG_PASSWORD ?? 'postgres',
-        entities: ['./dist/contexts/**/*.entity.js'],
-        entitiesTs: ['./src/contexts/**/*.entity.ts'],
+        entities: ['./dist/contexts/**/*Entity.js'],
+        entitiesTs: ['./src/contexts/**/*Entity.ts'],
         namingStrategy: UnderscoreNamingStrategy,
         migrations: {
           path: './dist/migrations',
