@@ -37,6 +37,7 @@ import { AuthGuard } from './shared/AuthGuard';
         migrations: {
           path: './dist/migrations',
           pathTs: './src/migrations',
+          tableName: 'mikro_orm_migrations',
         },
         extensions: [Migrator],
       }),

@@ -26,6 +26,6 @@
       "@contexts/*": ["contexts/*"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "mikro-orm.config.ts"],
   "exclude": ["node_modules", "dist", "test", "src/integration", "**/*.spec.ts"]
 }

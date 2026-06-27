@@ -94,15 +94,88 @@ it with `docker compose down -v` (this **destroys** the database).
 
 ```bash
 npm install
-npm run start:dev
+npm run migration:up    # apply pending migrations
+npm run start:dev      # NestJS dev server with hot reload
 ```
 
 Requires a running PostgreSQL instance. Set `PG_HOST`, `PG_USER`, `PG_PASSWORD`
-etc. via env or `.env` file. Run migrations manually:
+etc. via env or `.env` file (see `.env.example`).
+
+## Database Migrations
+
+Migrations are managed by MikroORM's `Migrator` extension. The standalone CLI
+config lives in `mikro-orm.config.ts` (mirrors the runtime config from
+`app.module.ts` so the `mikro-orm` binary can connect without bootstrapping
+NestJS).
+
+### Existing Migrations
+
+| File | Description |
+|------|-------------|
+| `src/migrations/Migration20260626000000_initial.ts` | Creates `users` + `refresh_tokens` tables (identity context) |
+| `src/migrations/Migration20260626000001_game_records.ts` | Creates `game_records` table (game-records context) |
+
+MikroORM tracks applied migrations in the `mikro_orm_migrations` table.
+
+### NPM Scripts
+
+| Script | Command | Description |
+|--------|---------|-------------|
+| `npm run migration:up` | `mikro-orm migration:up` | Apply all pending migrations |
+| `npm run migration:down` | `mikro-orm migration:down` | Revert the last applied migration |
+| `npm run migration:list` | `mikro-orm migration:list` | Show pending and applied migrations |
+| `npm run migration:create` | `mikro-orm migration:create` | Generate a new migration from entity changes |
+
+### Workflow
+
+**Apply migrations** (local dev or CI):
 
 ```bash
-npx mikro-orm migration:up
+npm run migration:up
 ```
+
+**Check migration status:**
+
+```bash
+npm run migration:list
+```
+
+**Create a new migration** after modifying or adding `@Entity` classes:
+
+```bash
+# 1. Make changes to entity files under src/contexts/*/infrastructure/persistence/
+# 2. Generate the migration
+npm run migration:create
+# 3. Review the generated file in src/migrations/
+# 4. Apply it
+npm run migration:up
+```
+
+**Revert the last migration:**
+
+```bash
+npm run migration:down
+```
+
+### Docker
+
+The `Dockerfile` runs migrations automatically before starting the server:
+
+```dockerfile
+CMD ["sh", "-c", "npx mikro-orm migration:up --config dist/mikro-orm.config.js && node dist/main.js"]
+```
+
+So `docker compose up --build` applies pending migrations and then boots the API
+in one step. No manual migration command is needed in Docker.
+
+### Migration Rules
+
+- **Never edit an already-applied migration** — create a new one instead.
+- **Always include `up()` and `down()` methods** — down must cleanly revert up.
+- **Column names are snake_case** (via `UnderscoreNamingStrategy`) — write raw SQL
+  with snake_case identifiers in migration files.
+- **Domain invariants** (e.g., `score >= 0`) are enforced at the domain edge (Value
+  Objects) AND defensively at the storage level (CHECK constraints).
 
 ## Testing
 
