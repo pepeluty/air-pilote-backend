@@ -20,7 +20,7 @@ export default defineConfig({
   dbName: process.env.PG_DB ?? 'air-pilote',
   user: process.env.PG_USER ?? 'postgres',
   password: process.env.PG_PASSWORD ?? 'postgres',
-  entities: ['./dist/contexts/**/*Entity.js'],
+  entities: ['./dist/**/contexts/**/*Entity.js'],
   entitiesTs: ['./src/contexts/**/*Entity.ts'],
   namingStrategy: UnderscoreNamingStrategy,
   migrations: {
