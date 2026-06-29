@@ -5,17 +5,22 @@
  *
  * Routes (ALL protected — NO @Public; the global AuthGuard handles access
  * token verification + UserExists existence check, CRITICAL Decision #5):
- *   POST /game-records          -> PersistGameRecord -> 201 { id, score, durationMs, timestamp }
+ *   POST /game-records          -> PersistGameRecord -> 201 { id, score, durationMs, timestamp, jetTypeId }
  *   GET  /game-records/high-score -> GetHighScore      -> 200 { highScore: number | null }
- *   GET  /game-records          -> ListGameRecords    -> 200 { items, total, hasMore }
+ *   GET  /game-records          -> ListGameRecords    -> 200 { items[{...,jetTypeId}], total, hasMore }
  *
  * The userId is ALWAYS taken from the verified access token via `req.user`
  * (set by the global AuthGuard) — NEVER from the request body or a query
  * param. This guarantees "Cannot access other players' records": a caller can
  * only persist/read their own records.
  *
- * Design data flow (c): AuthGuard -> UserExists (NonExistentUserError on
- * deleted user) -> PersistGameRecord -> Score VO (rejects negative ->
+ * `jetTypeId` arrives in the POST body and is echoed in BOTH the persist
+ * response and every list item (spec MODIFIED "List Game Records by User":
+ * each returned record MUST include `jetTypeId`).
+ *
+ * Design data flow (c/d): AuthGuard -> UserExists (NonExistentUserError on
+ * deleted user) -> PersistGameRecord -> JetTypeExists (rejects unknown ->
+ * ValidationError 422, no FK 500) -> Score VO (rejects negative ->
  * ValidationError) -> repository save -> 201.
  *
  * Infrastructure layer: framework allowed (NestJS).
@@ -30,6 +35,7 @@ import { PersistGameRecord } from '../../application/usecases/PersistGameRecord'
 interface PersistGameRecordDto {
   score?: number;
   durationMs?: number;
+  jetTypeId?: string;
 }
 
 @Controller('game-records')
@@ -44,18 +50,20 @@ export class GameRecordsController {
   async persist(
     @Req() req: Request,
     @Body() body: PersistGameRecordDto,
-  ): Promise<{ id: string; score: number; durationMs: number; timestamp: Date }> {
+  ): Promise<{ id: string; score: number; durationMs: number; timestamp: Date; jetTypeId: string }> {
     const userId = this.userIdOf(req);
     const record = await this.persistGameRecord.execute({
       userId,
       score: body.score ?? 0,
       durationMs: body.durationMs ?? 0,
+      jetTypeId: body.jetTypeId ?? '',
     });
     return {
       id: record.id,
       score: record.score.value,
       durationMs: record.durationMs,
       timestamp: record.timestamp,
+      jetTypeId: record.jetTypeId,
     };
   }
 
@@ -72,7 +80,7 @@ export class GameRecordsController {
     @Query('limit') limit?: string,
     @Query('offset') offset?: string,
   ): Promise<{
-    items: { id: string; score: number; durationMs: number; timestamp: Date }[];
+    items: { id: string; score: number; durationMs: number; timestamp: Date; jetTypeId: string }[];
     total: number;
     hasMore: boolean;
   }> {
@@ -88,6 +96,7 @@ export class GameRecordsController {
         score: r.score.value,
         durationMs: r.durationMs,
         timestamp: r.timestamp,
+        jetTypeId: r.jetTypeId,
       })),
       total: page.total,
       hasMore: page.hasMore,
