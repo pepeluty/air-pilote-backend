@@ -1,10 +1,11 @@
 /**
  * Test DB harness — spins up PostgreSQL in a testcontainer, boots MikroORM
- * against it (with the real identity + game-records entities and the
- * UnderscoreNamingStrategy), and creates the schema from the entities via the
- * SchemaGenerator. Each jest worker loads this module once, so one spec file =
- * one container. Exposes a fresh request context (`getEm`) for clean
- * identity-maps per test.
+ * against it (with the real identity + game-records + jet-types entities and
+ * the UnderscoreNamingStrategy), and runs ALL migrations via the Migrator
+ * (creating the schema AND seeding the jet_types rows with the fixed UUIDs —
+ * which the jet-types integration spec asserts, task 7.3). Each jest worker
+ * loads this module once, so one spec file = one container. Exposes a fresh
+ * request context (`getEm`) for clean identity-maps per test.
  *
  * Infrastructure-layer test helper: framework allowed (@mikro-orm/@nestjs +
  * testcontainers). NOT shipped in the prod build — `src/integration` is excluded
@@ -17,16 +18,19 @@ import { EntityManager, UnderscoreNamingStrategy, defineConfig } from '@mikro-or
 import { UserEntity } from '../contexts/identity/infrastructure/persistence/UserEntity';
 import { RefreshTokenEntity } from '../contexts/identity/infrastructure/persistence/RefreshTokenEntity';
 import { GameRecordEntity } from '../contexts/game-records/infrastructure/persistence/GameRecordEntity';
+import { JetTypeEntity } from '../contexts/jet-types/infrastructure/persistence/JetTypeEntity';
 
 type StartedContainer = Awaited<ReturnType<GenericContainer['start']>>;
 
 let orm: MikroORM | undefined;
 let container: StartedContainer | undefined;
 
-const ENTITIES = [UserEntity, RefreshTokenEntity, GameRecordEntity];
+const ENTITIES = [UserEntity, RefreshTokenEntity, GameRecordEntity, JetTypeEntity];
 
 /**
- * Start Postgres + boot MikroORM + create the schema. Idempotent per worker.
+ * Start Postgres + boot MikroORM + run ALL migrations (creates the schema AND
+ * seeds the jet_types rows with the fixed UUIDs so the FK default on
+ * game_records.jet_type_id resolves). Idempotent per worker.
  */
 export async function startDatabase(): Promise<MikroORM> {
   if (orm) return orm;
@@ -48,10 +52,22 @@ export async function startDatabase(): Promise<MikroORM> {
       namingStrategy: UnderscoreNamingStrategy,
       allowGlobalContext: true,
       extensions: [Migrator],
+      migrations: {
+        path: './src/migrations',
+        pathTs: './src/migrations',
+        glob: '!(*.d).ts',
+        transactional: true,
+        allOrNothing: true,
+      },
     }),
   );
 
-  await orm.schema.createSchema();
+  // Drop any entity-derived schema first (a no-op on a fresh container) then
+  // run all migrations in filename order: 00000000_initial, 00000001_game_records,
+  // 00000002_jet_types (seed), 00000003_game_records_jet_type_fk. This is the
+  // real rollout path the jet-types integration spec asserts against.
+  await orm.schema.dropSchema();
+  await orm.migrator.up();
   return orm;
 }
 

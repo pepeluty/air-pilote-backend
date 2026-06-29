@@ -15,6 +15,9 @@ import { Score } from '../contexts/game-records/domain/vo/Score';
 import { GameRecordRepositoryAdapter } from '../contexts/game-records/infrastructure/persistence/GameRecordRepositoryAdapter';
 import { getEm, startDatabase, stopDatabase } from './db-harness';
 
+/** Fixed seed UUID for the Balanced jet type (design "Fixed seed UUIDs"). */
+const BALANCED_JET_TYPE_ID = '00000000-0000-4000-8000-000000000002';
+
 function dockerAvailable(): boolean {
   try {
     execSync('docker info', { stdio: 'ignore' });
@@ -41,18 +44,19 @@ describeOrSkip('Game-records infrastructure (Postgres via testcontainers)', () =
     const repo = new GameRecordRepositoryAdapter(getEm());
     const userId = randomishId();
     const saved = await repo.save(
-      GameRecord.create(userId, Score.create(1200), 45_000),
+      GameRecord.create(userId, BALANCED_JET_TYPE_ID, Score.create(1200), 45_000),
     );
     expect(saved.userId).toBe(userId);
+    expect(saved.jetTypeId).toBe(BALANCED_JET_TYPE_ID);
     expect(saved.score.value).toBe(1200);
   });
 
   it('highScoreOf returns the max (3000 over 1200/950)', async () => {
     const repo = new GameRecordRepositoryAdapter(getEm());
     const userId = randomishId();
-    await repo.save(GameRecord.create(userId, Score.create(1200), 10_000));
-    await repo.save(GameRecord.create(userId, Score.create(950), 9_000));
-    await repo.save(GameRecord.create(userId, Score.create(3000), 12_000));
+    await repo.save(GameRecord.create(userId, BALANCED_JET_TYPE_ID, Score.create(1200), 10_000));
+    await repo.save(GameRecord.create(userId, BALANCED_JET_TYPE_ID, Score.create(950), 9_000));
+    await repo.save(GameRecord.create(userId, BALANCED_JET_TYPE_ID, Score.create(3000), 12_000));
 
     expect(await repo.highScoreOf(userId)).toBe(3000);
   });
@@ -67,7 +71,7 @@ describeOrSkip('Game-records infrastructure (Postgres via testcontainers)', () =
     const userId = randomishId();
     // 5 records; requesting offset 10 (page 2 of size 10) is past the end.
     for (let i = 0; i < 5; i++) {
-      await repo.save(GameRecord.create(userId, Score.create(i * 100), 1_000));
+      await repo.save(GameRecord.create(userId, BALANCED_JET_TYPE_ID, Score.create(i * 100), 1_000));
     }
     const page = await repo.listByUser(userId, { limit: 10, offset: 10 });
     expect(page.items).toHaveLength(0);
@@ -87,8 +91,8 @@ describeOrSkip('Game-records infrastructure (Postgres via testcontainers)', () =
     const repo = new GameRecordRepositoryAdapter(getEm());
     const userA = randomishId();
     const userB = randomishId();
-    await repo.save(GameRecord.create(userA, Score.create(777), 1_000));
-    await repo.save(GameRecord.create(userB, Score.create(123), 2_000));
+    await repo.save(GameRecord.create(userA, BALANCED_JET_TYPE_ID, Score.create(777), 1_000));
+    await repo.save(GameRecord.create(userB, BALANCED_JET_TYPE_ID, Score.create(123), 2_000));
 
     // userB's listing must contain ONLY userB's record — never userA's.
     const pageB = await repo.listByUser(userB, { limit: 100, offset: 0 });
