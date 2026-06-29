@@ -5,6 +5,8 @@
  * The domain Score value object is reconstructed from the stored integer via
  * {@link Score.create} on the way in (the stored score is always non-negative
  * — it was validated at persist time — so reconstruction cannot throw).
+ * `jetTypeId` is carried verbatim in both directions (validated upstream by
+ * the `JetTypeExists` port in `PersistGameRecord`).
  */
 import { GameRecord } from '../../domain/GameRecord';
 import { Score } from '../../domain/vo/Score';
@@ -15,6 +17,7 @@ export class GameRecordMapper {
     return GameRecord.rehydrate({
       id: entity.id,
       userId: entity.userId,
+      jetTypeId: entity.jetTypeId,
       score: Score.create(entity.score),
       durationMs: entity.durationMs,
       timestamp: entity.timestamp,
@@ -25,6 +28,7 @@ export class GameRecordMapper {
     const entity = target ?? new GameRecordEntity();
     entity.id = record.id;
     entity.userId = record.userId;
+    entity.jetTypeId = record.jetTypeId;
     entity.score = record.score.value;
     entity.durationMs = record.durationMs;
     entity.timestamp = record.timestamp;
