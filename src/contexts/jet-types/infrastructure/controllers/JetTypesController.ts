@@ -29,6 +29,7 @@ interface JetTypeDto {
   accelerationRate: number;
   defense: number;
   damage: number;
+  rotationSpeed: number;
 }
 
 @Public()
@@ -47,6 +48,7 @@ export class JetTypesController {
       accelerationRate: j.accelerationRate.value,
       defense: j.defense.value,
       damage: j.damage.value,
+      rotationSpeed: j.rotationSpeed.value,
     }));
   }
 }

@@ -24,6 +24,7 @@ import { AccelerationRate } from './vo/AccelerationRate';
 import { CruiseSpeed } from './vo/CruiseSpeed';
 import { Damage } from './vo/Damage';
 import { Defense } from './vo/Defense';
+import { RotationSpeed } from './vo/RotationSpeed';
 import { Speed } from './vo/Speed';
 
 export interface JetTypeProps {
@@ -34,6 +35,7 @@ export interface JetTypeProps {
   readonly accelerationRate: AccelerationRate;
   readonly defense: Defense;
   readonly damage: Damage;
+  readonly rotationSpeed: RotationSpeed;
 }
 
 export class JetType extends AggregateRoot<string> {
@@ -43,6 +45,7 @@ export class JetType extends AggregateRoot<string> {
   public readonly accelerationRate: AccelerationRate;
   public readonly defense: Defense;
   public readonly damage: Damage;
+  public readonly rotationSpeed: RotationSpeed;
 
   private constructor(props: JetTypeProps) {
     super(props.id);
@@ -52,6 +55,7 @@ export class JetType extends AggregateRoot<string> {
     this.accelerationRate = props.accelerationRate;
     this.defense = props.defense;
     this.damage = props.damage;
+    this.rotationSpeed = props.rotationSpeed;
   }
 
   /**
@@ -69,6 +73,7 @@ export class JetType extends AggregateRoot<string> {
     accelerationRate: AccelerationRate,
     defense: Defense,
     damage: Damage,
+    rotationSpeed: RotationSpeed,
   ): JetType {
     if (typeof id !== 'string' || id.length === 0) {
       throw new ValidationError('jet_type_id_required');
@@ -89,6 +94,7 @@ export class JetType extends AggregateRoot<string> {
       accelerationRate,
       defense,
       damage,
+      rotationSpeed,
     });
   }
 

@@ -17,6 +17,7 @@ import { AccelerationRate } from '../vo/AccelerationRate';
 import { CruiseSpeed } from '../vo/CruiseSpeed';
 import { Damage } from '../vo/Damage';
 import { Defense } from '../vo/Defense';
+import { RotationSpeed } from '../vo/RotationSpeed';
 import { Speed } from '../vo/Speed';
 
 describe('Speed value object (maxSpeed > 0)', () => {
@@ -104,6 +105,28 @@ describe('Damage value object (> 0, per-hit projectile damage)', () => {
   });
 });
 
+describe('RotationSpeed value object (> 0 rad/s)', () => {
+  it('accepts a positive value (e.g. Interceptor 6.0)', () => {
+    expect(RotationSpeed.create(6.0).value).toBe(6.0);
+  });
+  it('accepts a fractional value (e.g. Balanced 4.5)', () => {
+    expect(RotationSpeed.create(4.5).value).toBe(4.5);
+  });
+  it('rejects zero', () => {
+    expect(() => RotationSpeed.create(0)).toThrow(ValidationError);
+  });
+  it('rejects a negative value', () => {
+    expect(() => RotationSpeed.create(-1)).toThrow(ValidationError);
+  });
+  it('rejects a non-finite value', () => {
+    expect(() => RotationSpeed.create(Number.NaN)).toThrow(ValidationError);
+  });
+  it('is value-based equal', () => {
+    expect(RotationSpeed.create(6.0).equals(RotationSpeed.create(6.0))).toBe(true);
+    expect(RotationSpeed.create(6.0).equals(RotationSpeed.create(4.5))).toBe(false);
+  });
+});
+
 describe('JetType aggregate (cross-VO invariant maxSpeed > cruiseSpeed)', () => {
   // Seed values from the authoritative design seed-values table.
   const INTERCEPTOR_ID = '00000000-0000-4000-8000-000000000001';
@@ -119,6 +142,7 @@ describe('JetType aggregate (cross-VO invariant maxSpeed > cruiseSpeed)', () => 
       AccelerationRate.create(4.0),
       Defense.create(10),
       Damage.create(30),
+      RotationSpeed.create(6.0),
     );
 
     expect(jet.id).toBe(INTERCEPTOR_ID);
@@ -128,6 +152,7 @@ describe('JetType aggregate (cross-VO invariant maxSpeed > cruiseSpeed)', () => 
     expect(jet.accelerationRate.value).toBe(4.0);
     expect(jet.defense.value).toBe(10);
     expect(jet.damage.value).toBe(30);
+    expect(jet.rotationSpeed.value).toBe(6.0);
   });
 
   it('creates the Balanced archetype (the FK default)', () => {
@@ -139,10 +164,12 @@ describe('JetType aggregate (cross-VO invariant maxSpeed > cruiseSpeed)', () => 
       AccelerationRate.create(5.0),
       Defense.create(35),
       Damage.create(45),
+      RotationSpeed.create(4.5),
     );
     expect(jet.name).toBe('Balanced');
     expect(jet.maxSpeed.value).toBe(360);
     expect(jet.defense.value).toBe(35);
+    expect(jet.rotationSpeed.value).toBe(4.5);
   });
 
   it('creates the Heavy archetype (slowest, toughest)', () => {
@@ -154,9 +181,11 @@ describe('JetType aggregate (cross-VO invariant maxSpeed > cruiseSpeed)', () => 
       AccelerationRate.create(6.0),
       Defense.create(60),
       Damage.create(80),
+      RotationSpeed.create(3.0),
     );
     expect(jet.name).toBe('Heavy');
     expect(jet.damage.value).toBe(80);
+    expect(jet.rotationSpeed.value).toBe(3.0);
   });
 
   it('rejects maxSpeed <= cruiseSpeed (the headline invariant)', () => {
@@ -170,6 +199,7 @@ describe('JetType aggregate (cross-VO invariant maxSpeed > cruiseSpeed)', () => 
         AccelerationRate.create(4.0),
         Defense.create(10),
         Damage.create(30),
+        RotationSpeed.create(6.0),
       ),
     ).toThrow(ValidationError);
 
@@ -183,6 +213,7 @@ describe('JetType aggregate (cross-VO invariant maxSpeed > cruiseSpeed)', () => 
         AccelerationRate.create(4.0),
         Defense.create(10),
         Damage.create(30),
+        RotationSpeed.create(6.0),
       ),
     ).toThrow(ValidationError);
   });
@@ -197,6 +228,7 @@ describe('JetType aggregate (cross-VO invariant maxSpeed > cruiseSpeed)', () => 
         AccelerationRate.create(4.0),
         Defense.create(10),
         Damage.create(30),
+        RotationSpeed.create(6.0),
       ),
     ).toThrow(ValidationError);
   });
@@ -211,6 +243,7 @@ describe('JetType aggregate (cross-VO invariant maxSpeed > cruiseSpeed)', () => 
         AccelerationRate.create(4.0),
         Defense.create(10),
         Damage.create(30),
+        RotationSpeed.create(6.0),
       ),
     ).toThrow(ValidationError);
   });
@@ -224,8 +257,10 @@ describe('JetType aggregate (cross-VO invariant maxSpeed > cruiseSpeed)', () => 
       accelerationRate: AccelerationRate.create(4.0),
       defense: Defense.create(10),
       damage: Damage.create(30),
+      rotationSpeed: RotationSpeed.create(6.0),
     });
     expect(jet.id).toBe(INTERCEPTOR_ID);
     expect(jet.maxSpeed.value).toBe(460);
+    expect(jet.rotationSpeed.value).toBe(6.0);
   });
 });

@@ -70,7 +70,7 @@ describeOrSkip('Jet-types infrastructure (Postgres via testcontainers)', () => {
   it('seeds exactly 3 jet_types rows with the fixed UUIDs (spec: Jet Type Catalog)', async () => {
     const em = getEm() as unknown as RawSql;
     const rows = (await em.execute(
-      `select id, name, max_speed, cruise_speed, acceleration_rate, defense, damage
+      `select id, name, max_speed, cruise_speed, acceleration_rate, defense, damage, rotation_speed
        from jet_types order by name`,
     )) as Array<{
       id: string;
@@ -80,6 +80,7 @@ describeOrSkip('Jet-types infrastructure (Postgres via testcontainers)', () => {
       acceleration_rate: string;
       defense: string;
       damage: string;
+      rotation_speed: string;
     }>;
 
     expect(rows).toHaveLength(3);
@@ -94,6 +95,7 @@ describeOrSkip('Jet-types infrastructure (Postgres via testcontainers)', () => {
     expect(Number(interceptor!.acceleration_rate)).toBeCloseTo(4.0, 5);
     expect(Number(interceptor!.defense)).toBe(10);
     expect(Number(interceptor!.damage)).toBe(30);
+    expect(Number(interceptor!.rotation_speed)).toBeCloseTo(6.0, 5);
 
     const balanced = byName.get('Balanced');
     expect(balanced).toBeDefined();
@@ -102,6 +104,7 @@ describeOrSkip('Jet-types infrastructure (Postgres via testcontainers)', () => {
     expect(Number(balanced!.acceleration_rate)).toBeCloseTo(5.0, 5);
     expect(Number(balanced!.defense)).toBe(35);
     expect(Number(balanced!.damage)).toBe(45);
+    expect(Number(balanced!.rotation_speed)).toBeCloseTo(4.5, 5);
 
     const heavy = byName.get('Heavy');
     expect(heavy).toBeDefined();
@@ -111,6 +114,7 @@ describeOrSkip('Jet-types infrastructure (Postgres via testcontainers)', () => {
     expect(Number(heavy!.acceleration_rate)).toBeCloseTo(6.0, 5);
     expect(Number(heavy!.defense)).toBe(60);
     expect(Number(heavy!.damage)).toBe(80);
+    expect(Number(heavy!.rotation_speed)).toBeCloseTo(3.0, 5);
   });
 
   it('JetTypeRepositoryAdapter.findAll maps the 3 seeded rows to domain aggregates', async () => {
@@ -150,8 +154,11 @@ describeOrSkip('Jet-types infrastructure (Postgres via testcontainers)', () => {
     expect(byName.get('Interceptor')!.id).toBe(INTERCEPTOR_ID);
     expect(byName.get('Interceptor')!.maxSpeed).toBe(460);
     expect(byName.get('Interceptor')!.accelerationRate).toBeCloseTo(4.0, 5);
+    expect(byName.get('Interceptor')!.rotationSpeed).toBeCloseTo(6.0, 5);
     expect(byName.get('Balanced')!.id).toBe(BALANCED_ID);
+    expect(byName.get('Balanced')!.rotationSpeed).toBeCloseTo(4.5, 5);
     expect(byName.get('Heavy')!.damage).toBe(80);
+    expect(byName.get('Heavy')!.rotationSpeed).toBeCloseTo(3.0, 5);
   });
 
   // --- Migration20260626000003_game_records_jet_type_fk: column + FK + default ---

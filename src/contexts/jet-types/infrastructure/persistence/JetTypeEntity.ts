@@ -40,4 +40,7 @@ export class JetTypeEntity {
 
   @Property()
   damage!: number;
+
+  @Property()
+  rotationSpeed!: number;
 }

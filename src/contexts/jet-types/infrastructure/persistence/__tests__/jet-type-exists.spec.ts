@@ -49,6 +49,7 @@ function row(
   acc: number,
   defense: number,
   damage: number,
+  rotationSpeed: number,
 ): JetTypeEntity {
   const e = new JetTypeEntity();
   e.id = id;
@@ -58,6 +59,7 @@ function row(
   e.accelerationRate = acc;
   e.defense = defense;
   e.damage = damage;
+  e.rotationSpeed = rotationSpeed;
   return e;
 }
 
@@ -68,9 +70,9 @@ const UNKNOWN_ID = 'ffffffff-ffff-4000-8000-ffffffffffff';
 
 function seedRows(): JetTypeEntity[] {
   return [
-    row(INTERCEPTOR_ID, 'Interceptor', 460, 200, 4.0, 10, 30),
-    row(BALANCED_ID, 'Balanced', 360, 200, 5.0, 35, 45),
-    row(HEAVY_ID, 'Heavy', 280, 180, 6.0, 60, 80),
+    row(INTERCEPTOR_ID, 'Interceptor', 460, 200, 4.0, 10, 30, 6.0),
+    row(BALANCED_ID, 'Balanced', 360, 200, 5.0, 35, 45, 4.5),
+    row(HEAVY_ID, 'Heavy', 280, 180, 6.0, 60, 80, 3.0),
   ];
 }
 

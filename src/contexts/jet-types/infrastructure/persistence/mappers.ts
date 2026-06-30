@@ -23,6 +23,7 @@ import { AccelerationRate } from '../../domain/vo/AccelerationRate';
 import { CruiseSpeed } from '../../domain/vo/CruiseSpeed';
 import { Damage } from '../../domain/vo/Damage';
 import { Defense } from '../../domain/vo/Defense';
+import { RotationSpeed } from '../../domain/vo/RotationSpeed';
 import { Speed } from '../../domain/vo/Speed';
 import { JetTypeEntity } from './JetTypeEntity';
 
@@ -36,6 +37,7 @@ export class JetTypeMapper {
       accelerationRate: AccelerationRate.create(Number(entity.accelerationRate)),
       defense: Defense.create(Number(entity.defense)),
       damage: Damage.create(Number(entity.damage)),
+      rotationSpeed: RotationSpeed.create(Number(entity.rotationSpeed)),
     });
   }
 
@@ -48,6 +50,7 @@ export class JetTypeMapper {
     entity.accelerationRate = jetType.accelerationRate.value;
     entity.defense = jetType.defense.value;
     entity.damage = jetType.damage.value;
+    entity.rotationSpeed = jetType.rotationSpeed.value;
     return entity;
   }
 }
