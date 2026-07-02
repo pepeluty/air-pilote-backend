@@ -17,6 +17,13 @@ import { AccelerationRate } from '../vo/AccelerationRate';
 import { CruiseSpeed } from '../vo/CruiseSpeed';
 import { Damage } from '../vo/Damage';
 import { Defense } from '../vo/Defense';
+import { LockDelay } from '../vo/LockDelay';
+import { MissileDamage } from '../vo/MissileDamage';
+import { MissileLifetime } from '../vo/MissileLifetime';
+import { MissileSpeed } from '../vo/MissileSpeed';
+import { MissileTurnRate } from '../vo/MissileTurnRate';
+import { RadarAngle } from '../vo/RadarAngle';
+import { RadarRange } from '../vo/RadarRange';
 import { RotationSpeed } from '../vo/RotationSpeed';
 import { Speed } from '../vo/Speed';
 
@@ -127,6 +134,125 @@ describe('RotationSpeed value object (> 0 rad/s)', () => {
   });
 });
 
+describe('LockDelay value object (> 0 ms)', () => {
+  it('accepts a positive value (e.g. Interceptor 400)', () => {
+    expect(LockDelay.create(400).value).toBe(400);
+  });
+  it('rejects zero', () => {
+    expect(() => LockDelay.create(0)).toThrow(ValidationError);
+  });
+  it('rejects a negative value', () => {
+    expect(() => LockDelay.create(-1)).toThrow(ValidationError);
+  });
+  it('rejects a non-finite value', () => {
+    expect(() => LockDelay.create(Number.NaN)).toThrow(ValidationError);
+  });
+  it('is value-based equal', () => {
+    expect(LockDelay.create(400).equals(LockDelay.create(400))).toBe(true);
+    expect(LockDelay.create(400).equals(LockDelay.create(600))).toBe(false);
+  });
+});
+
+describe('RadarRange value object (> 0 px)', () => {
+  it('accepts a positive value (e.g. Interceptor 550)', () => {
+    expect(RadarRange.create(550).value).toBe(550);
+  });
+  it('rejects zero', () => {
+    expect(() => RadarRange.create(0)).toThrow(ValidationError);
+  });
+  it('rejects a negative value', () => {
+    expect(() => RadarRange.create(-1)).toThrow(ValidationError);
+  });
+  it('is value-based equal', () => {
+    expect(RadarRange.create(550).equals(RadarRange.create(550))).toBe(true);
+  });
+});
+
+describe('RadarAngle value object ((0, 90) degrees)', () => {
+  it('accepts a value in range (e.g. Interceptor 25)', () => {
+    expect(RadarAngle.create(25).value).toBe(25);
+  });
+  it('rejects zero', () => {
+    expect(() => RadarAngle.create(0)).toThrow(ValidationError);
+  });
+  it('rejects 90 (exclusive upper bound)', () => {
+    expect(() => RadarAngle.create(90)).toThrow(ValidationError);
+  });
+  it('rejects a value above 90', () => {
+    expect(() => RadarAngle.create(91)).toThrow(ValidationError);
+  });
+  it('rejects a negative value', () => {
+    expect(() => RadarAngle.create(-1)).toThrow(ValidationError);
+  });
+  it('rejects a non-finite value', () => {
+    expect(() => RadarAngle.create(Number.NaN)).toThrow(ValidationError);
+  });
+  it('is value-based equal', () => {
+    expect(RadarAngle.create(25).equals(RadarAngle.create(25))).toBe(true);
+    expect(RadarAngle.create(25).equals(RadarAngle.create(30))).toBe(false);
+  });
+});
+
+describe('MissileSpeed value object (> 0 px/s)', () => {
+  it('accepts a positive value (e.g. Interceptor 380)', () => {
+    expect(MissileSpeed.create(380).value).toBe(380);
+  });
+  it('rejects zero', () => {
+    expect(() => MissileSpeed.create(0)).toThrow(ValidationError);
+  });
+  it('rejects a negative value', () => {
+    expect(() => MissileSpeed.create(-1)).toThrow(ValidationError);
+  });
+  it('is value-based equal', () => {
+    expect(MissileSpeed.create(380).equals(MissileSpeed.create(380))).toBe(true);
+  });
+});
+
+describe('MissileTurnRate value object (> 0 rad/s)', () => {
+  it('accepts a positive value (e.g. Interceptor 5.0)', () => {
+    expect(MissileTurnRate.create(5.0).value).toBe(5.0);
+  });
+  it('rejects zero', () => {
+    expect(() => MissileTurnRate.create(0)).toThrow(ValidationError);
+  });
+  it('rejects a negative value', () => {
+    expect(() => MissileTurnRate.create(-1)).toThrow(ValidationError);
+  });
+  it('is value-based equal', () => {
+    expect(MissileTurnRate.create(5.0).equals(MissileTurnRate.create(5.0))).toBe(true);
+  });
+});
+
+describe('MissileLifetime value object (> 0 ms)', () => {
+  it('accepts a positive value (e.g. Interceptor 2500)', () => {
+    expect(MissileLifetime.create(2500).value).toBe(2500);
+  });
+  it('rejects zero', () => {
+    expect(() => MissileLifetime.create(0)).toThrow(ValidationError);
+  });
+  it('rejects a negative value', () => {
+    expect(() => MissileLifetime.create(-1)).toThrow(ValidationError);
+  });
+  it('is value-based equal', () => {
+    expect(MissileLifetime.create(2500).equals(MissileLifetime.create(2500))).toBe(true);
+  });
+});
+
+describe('MissileDamage value object (> 0 hp)', () => {
+  it('accepts a positive value (e.g. Interceptor 60)', () => {
+    expect(MissileDamage.create(60).value).toBe(60);
+  });
+  it('rejects zero', () => {
+    expect(() => MissileDamage.create(0)).toThrow(ValidationError);
+  });
+  it('rejects a negative value', () => {
+    expect(() => MissileDamage.create(-1)).toThrow(ValidationError);
+  });
+  it('is value-based equal', () => {
+    expect(MissileDamage.create(60).equals(MissileDamage.create(60))).toBe(true);
+  });
+});
+
 describe('JetType aggregate (cross-VO invariant maxSpeed > cruiseSpeed)', () => {
   // Seed values from the authoritative design seed-values table.
   const INTERCEPTOR_ID = '00000000-0000-4000-8000-000000000001';
@@ -143,6 +269,13 @@ describe('JetType aggregate (cross-VO invariant maxSpeed > cruiseSpeed)', () => 
       Defense.create(10),
       Damage.create(30),
       RotationSpeed.create(6.0),
+      LockDelay.create(400),
+      RadarRange.create(550),
+      RadarAngle.create(25),
+      MissileSpeed.create(380),
+      MissileTurnRate.create(5.0),
+      MissileLifetime.create(2500),
+      MissileDamage.create(60),
     );
 
     expect(jet.id).toBe(INTERCEPTOR_ID);
@@ -153,6 +286,13 @@ describe('JetType aggregate (cross-VO invariant maxSpeed > cruiseSpeed)', () => 
     expect(jet.defense.value).toBe(10);
     expect(jet.damage.value).toBe(30);
     expect(jet.rotationSpeed.value).toBe(6.0);
+    expect(jet.lockDelay.value).toBe(400);
+    expect(jet.radarRange.value).toBe(550);
+    expect(jet.radarAngle.value).toBe(25);
+    expect(jet.missileSpeed.value).toBe(380);
+    expect(jet.missileTurnRate.value).toBe(5.0);
+    expect(jet.missileLifetime.value).toBe(2500);
+    expect(jet.missileDamage.value).toBe(60);
   });
 
   it('creates the Balanced archetype (the FK default)', () => {
@@ -165,11 +305,25 @@ describe('JetType aggregate (cross-VO invariant maxSpeed > cruiseSpeed)', () => 
       Defense.create(35),
       Damage.create(45),
       RotationSpeed.create(4.5),
+      LockDelay.create(600),
+      RadarRange.create(500),
+      RadarAngle.create(30),
+      MissileSpeed.create(350),
+      MissileTurnRate.create(4.0),
+      MissileLifetime.create(3000),
+      MissileDamage.create(75),
     );
     expect(jet.name).toBe('Balanced');
     expect(jet.maxSpeed.value).toBe(360);
     expect(jet.defense.value).toBe(35);
     expect(jet.rotationSpeed.value).toBe(4.5);
+    expect(jet.lockDelay.value).toBe(600);
+    expect(jet.radarRange.value).toBe(500);
+    expect(jet.radarAngle.value).toBe(30);
+    expect(jet.missileSpeed.value).toBe(350);
+    expect(jet.missileTurnRate.value).toBe(4.0);
+    expect(jet.missileLifetime.value).toBe(3000);
+    expect(jet.missileDamage.value).toBe(75);
   });
 
   it('creates the Heavy archetype (slowest, toughest)', () => {
@@ -182,10 +336,24 @@ describe('JetType aggregate (cross-VO invariant maxSpeed > cruiseSpeed)', () => 
       Defense.create(60),
       Damage.create(80),
       RotationSpeed.create(3.0),
+      LockDelay.create(1000),
+      RadarRange.create(450),
+      RadarAngle.create(35),
+      MissileSpeed.create(300),
+      MissileTurnRate.create(3.0),
+      MissileLifetime.create(3500),
+      MissileDamage.create(90),
     );
     expect(jet.name).toBe('Heavy');
     expect(jet.damage.value).toBe(80);
     expect(jet.rotationSpeed.value).toBe(3.0);
+    expect(jet.lockDelay.value).toBe(1000);
+    expect(jet.radarRange.value).toBe(450);
+    expect(jet.radarAngle.value).toBe(35);
+    expect(jet.missileSpeed.value).toBe(300);
+    expect(jet.missileTurnRate.value).toBe(3.0);
+    expect(jet.missileLifetime.value).toBe(3500);
+    expect(jet.missileDamage.value).toBe(90);
   });
 
   it('rejects maxSpeed <= cruiseSpeed (the headline invariant)', () => {
@@ -200,6 +368,13 @@ describe('JetType aggregate (cross-VO invariant maxSpeed > cruiseSpeed)', () => 
         Defense.create(10),
         Damage.create(30),
         RotationSpeed.create(6.0),
+        LockDelay.create(400),
+        RadarRange.create(550),
+        RadarAngle.create(25),
+        MissileSpeed.create(380),
+        MissileTurnRate.create(5.0),
+        MissileLifetime.create(2500),
+        MissileDamage.create(60),
       ),
     ).toThrow(ValidationError);
 
@@ -214,6 +389,13 @@ describe('JetType aggregate (cross-VO invariant maxSpeed > cruiseSpeed)', () => 
         Defense.create(10),
         Damage.create(30),
         RotationSpeed.create(6.0),
+        LockDelay.create(400),
+        RadarRange.create(550),
+        RadarAngle.create(25),
+        MissileSpeed.create(380),
+        MissileTurnRate.create(5.0),
+        MissileLifetime.create(2500),
+        MissileDamage.create(60),
       ),
     ).toThrow(ValidationError);
   });
@@ -229,6 +411,13 @@ describe('JetType aggregate (cross-VO invariant maxSpeed > cruiseSpeed)', () => 
         Defense.create(10),
         Damage.create(30),
         RotationSpeed.create(6.0),
+        LockDelay.create(400),
+        RadarRange.create(550),
+        RadarAngle.create(25),
+        MissileSpeed.create(380),
+        MissileTurnRate.create(5.0),
+        MissileLifetime.create(2500),
+        MissileDamage.create(60),
       ),
     ).toThrow(ValidationError);
   });
@@ -244,6 +433,13 @@ describe('JetType aggregate (cross-VO invariant maxSpeed > cruiseSpeed)', () => 
         Defense.create(10),
         Damage.create(30),
         RotationSpeed.create(6.0),
+        LockDelay.create(400),
+        RadarRange.create(550),
+        RadarAngle.create(25),
+        MissileSpeed.create(380),
+        MissileTurnRate.create(5.0),
+        MissileLifetime.create(2500),
+        MissileDamage.create(60),
       ),
     ).toThrow(ValidationError);
   });
@@ -258,9 +454,19 @@ describe('JetType aggregate (cross-VO invariant maxSpeed > cruiseSpeed)', () => 
       defense: Defense.create(10),
       damage: Damage.create(30),
       rotationSpeed: RotationSpeed.create(6.0),
+      lockDelay: LockDelay.create(400),
+      radarRange: RadarRange.create(550),
+      radarAngle: RadarAngle.create(25),
+      missileSpeed: MissileSpeed.create(380),
+      missileTurnRate: MissileTurnRate.create(5.0),
+      missileLifetime: MissileLifetime.create(2500),
+      missileDamage: MissileDamage.create(60),
     });
     expect(jet.id).toBe(INTERCEPTOR_ID);
     expect(jet.maxSpeed.value).toBe(460);
     expect(jet.rotationSpeed.value).toBe(6.0);
+    expect(jet.lockDelay.value).toBe(400);
+    expect(jet.radarAngle.value).toBe(25);
+    expect(jet.missileDamage.value).toBe(60);
   });
 });

@@ -24,6 +24,13 @@ import { AccelerationRate } from './vo/AccelerationRate';
 import { CruiseSpeed } from './vo/CruiseSpeed';
 import { Damage } from './vo/Damage';
 import { Defense } from './vo/Defense';
+import { LockDelay } from './vo/LockDelay';
+import { MissileDamage } from './vo/MissileDamage';
+import { MissileLifetime } from './vo/MissileLifetime';
+import { MissileSpeed } from './vo/MissileSpeed';
+import { MissileTurnRate } from './vo/MissileTurnRate';
+import { RadarAngle } from './vo/RadarAngle';
+import { RadarRange } from './vo/RadarRange';
 import { RotationSpeed } from './vo/RotationSpeed';
 import { Speed } from './vo/Speed';
 
@@ -36,6 +43,13 @@ export interface JetTypeProps {
   readonly defense: Defense;
   readonly damage: Damage;
   readonly rotationSpeed: RotationSpeed;
+  readonly lockDelay: LockDelay;
+  readonly radarRange: RadarRange;
+  readonly radarAngle: RadarAngle;
+  readonly missileSpeed: MissileSpeed;
+  readonly missileTurnRate: MissileTurnRate;
+  readonly missileLifetime: MissileLifetime;
+  readonly missileDamage: MissileDamage;
 }
 
 export class JetType extends AggregateRoot<string> {
@@ -46,6 +60,13 @@ export class JetType extends AggregateRoot<string> {
   public readonly defense: Defense;
   public readonly damage: Damage;
   public readonly rotationSpeed: RotationSpeed;
+  public readonly lockDelay: LockDelay;
+  public readonly radarRange: RadarRange;
+  public readonly radarAngle: RadarAngle;
+  public readonly missileSpeed: MissileSpeed;
+  public readonly missileTurnRate: MissileTurnRate;
+  public readonly missileLifetime: MissileLifetime;
+  public readonly missileDamage: MissileDamage;
 
   private constructor(props: JetTypeProps) {
     super(props.id);
@@ -56,6 +77,13 @@ export class JetType extends AggregateRoot<string> {
     this.defense = props.defense;
     this.damage = props.damage;
     this.rotationSpeed = props.rotationSpeed;
+    this.lockDelay = props.lockDelay;
+    this.radarRange = props.radarRange;
+    this.radarAngle = props.radarAngle;
+    this.missileSpeed = props.missileSpeed;
+    this.missileTurnRate = props.missileTurnRate;
+    this.missileLifetime = props.missileLifetime;
+    this.missileDamage = props.missileDamage;
   }
 
   /**
@@ -74,6 +102,13 @@ export class JetType extends AggregateRoot<string> {
     defense: Defense,
     damage: Damage,
     rotationSpeed: RotationSpeed,
+    lockDelay: LockDelay,
+    radarRange: RadarRange,
+    radarAngle: RadarAngle,
+    missileSpeed: MissileSpeed,
+    missileTurnRate: MissileTurnRate,
+    missileLifetime: MissileLifetime,
+    missileDamage: MissileDamage,
   ): JetType {
     if (typeof id !== 'string' || id.length === 0) {
       throw new ValidationError('jet_type_id_required');
@@ -95,6 +130,13 @@ export class JetType extends AggregateRoot<string> {
       defense,
       damage,
       rotationSpeed,
+      lockDelay,
+      radarRange,
+      radarAngle,
+      missileSpeed,
+      missileTurnRate,
+      missileLifetime,
+      missileDamage,
     });
   }
 

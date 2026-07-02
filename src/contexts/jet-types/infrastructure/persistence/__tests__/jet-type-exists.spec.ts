@@ -50,6 +50,13 @@ function row(
   defense: number,
   damage: number,
   rotationSpeed: number,
+  lockDelay: number,
+  radarRange: number,
+  radarAngle: number,
+  missileSpeed: number,
+  missileTurnRate: number,
+  missileLifetime: number,
+  missileDamage: number,
 ): JetTypeEntity {
   const e = new JetTypeEntity();
   e.id = id;
@@ -60,6 +67,13 @@ function row(
   e.defense = defense;
   e.damage = damage;
   e.rotationSpeed = rotationSpeed;
+  e.lockDelay = lockDelay;
+  e.radarRange = radarRange;
+  e.radarAngle = radarAngle;
+  e.missileSpeed = missileSpeed;
+  e.missileTurnRate = missileTurnRate;
+  e.missileLifetime = missileLifetime;
+  e.missileDamage = missileDamage;
   return e;
 }
 
@@ -70,9 +84,9 @@ const UNKNOWN_ID = 'ffffffff-ffff-4000-8000-ffffffffffff';
 
 function seedRows(): JetTypeEntity[] {
   return [
-    row(INTERCEPTOR_ID, 'Interceptor', 460, 200, 4.0, 10, 30, 6.0),
-    row(BALANCED_ID, 'Balanced', 360, 200, 5.0, 35, 45, 4.5),
-    row(HEAVY_ID, 'Heavy', 280, 180, 6.0, 60, 80, 3.0),
+    row(INTERCEPTOR_ID, 'Interceptor', 460, 200, 4.0, 10, 30, 6.0, 400, 550, 25, 380, 5.0, 2500, 60),
+    row(BALANCED_ID, 'Balanced', 360, 200, 5.0, 35, 45, 4.5, 600, 500, 30, 350, 4.0, 3000, 75),
+    row(HEAVY_ID, 'Heavy', 280, 180, 6.0, 60, 80, 3.0, 1000, 450, 35, 300, 3.0, 3500, 90),
   ];
 }
 

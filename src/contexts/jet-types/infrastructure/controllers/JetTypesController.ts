@@ -30,6 +30,13 @@ interface JetTypeDto {
   defense: number;
   damage: number;
   rotationSpeed: number;
+  lockDelay: number;
+  radarRange: number;
+  radarAngle: number;
+  missileSpeed: number;
+  missileTurnRate: number;
+  missileLifetime: number;
+  missileDamage: number;
 }
 
 @Public()
@@ -49,6 +56,13 @@ export class JetTypesController {
       defense: j.defense.value,
       damage: j.damage.value,
       rotationSpeed: j.rotationSpeed.value,
+      lockDelay: j.lockDelay.value,
+      radarRange: j.radarRange.value,
+      radarAngle: j.radarAngle.value,
+      missileSpeed: j.missileSpeed.value,
+      missileTurnRate: j.missileTurnRate.value,
+      missileLifetime: j.missileLifetime.value,
+      missileDamage: j.missileDamage.value,
     }));
   }
 }

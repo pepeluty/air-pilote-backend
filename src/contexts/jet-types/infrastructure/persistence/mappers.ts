@@ -23,6 +23,13 @@ import { AccelerationRate } from '../../domain/vo/AccelerationRate';
 import { CruiseSpeed } from '../../domain/vo/CruiseSpeed';
 import { Damage } from '../../domain/vo/Damage';
 import { Defense } from '../../domain/vo/Defense';
+import { LockDelay } from '../../domain/vo/LockDelay';
+import { MissileDamage } from '../../domain/vo/MissileDamage';
+import { MissileLifetime } from '../../domain/vo/MissileLifetime';
+import { MissileSpeed } from '../../domain/vo/MissileSpeed';
+import { MissileTurnRate } from '../../domain/vo/MissileTurnRate';
+import { RadarAngle } from '../../domain/vo/RadarAngle';
+import { RadarRange } from '../../domain/vo/RadarRange';
 import { RotationSpeed } from '../../domain/vo/RotationSpeed';
 import { Speed } from '../../domain/vo/Speed';
 import { JetTypeEntity } from './JetTypeEntity';
@@ -38,6 +45,13 @@ export class JetTypeMapper {
       defense: Defense.create(Number(entity.defense)),
       damage: Damage.create(Number(entity.damage)),
       rotationSpeed: RotationSpeed.create(Number(entity.rotationSpeed)),
+      lockDelay: LockDelay.create(Number(entity.lockDelay)),
+      radarRange: RadarRange.create(Number(entity.radarRange)),
+      radarAngle: RadarAngle.create(Number(entity.radarAngle)),
+      missileSpeed: MissileSpeed.create(Number(entity.missileSpeed)),
+      missileTurnRate: MissileTurnRate.create(Number(entity.missileTurnRate)),
+      missileLifetime: MissileLifetime.create(Number(entity.missileLifetime)),
+      missileDamage: MissileDamage.create(Number(entity.missileDamage)),
     });
   }
 
@@ -51,6 +65,13 @@ export class JetTypeMapper {
     entity.defense = jetType.defense.value;
     entity.damage = jetType.damage.value;
     entity.rotationSpeed = jetType.rotationSpeed.value;
+    entity.lockDelay = jetType.lockDelay.value;
+    entity.radarRange = jetType.radarRange.value;
+    entity.radarAngle = jetType.radarAngle.value;
+    entity.missileSpeed = jetType.missileSpeed.value;
+    entity.missileTurnRate = jetType.missileTurnRate.value;
+    entity.missileLifetime = jetType.missileLifetime.value;
+    entity.missileDamage = jetType.missileDamage.value;
     return entity;
   }
 }

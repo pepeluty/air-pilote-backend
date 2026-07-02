@@ -70,7 +70,8 @@ describeOrSkip('Jet-types infrastructure (Postgres via testcontainers)', () => {
   it('seeds exactly 3 jet_types rows with the fixed UUIDs (spec: Jet Type Catalog)', async () => {
     const em = getEm() as unknown as RawSql;
     const rows = (await em.execute(
-      `select id, name, max_speed, cruise_speed, acceleration_rate, defense, damage, rotation_speed
+      `select id, name, max_speed, cruise_speed, acceleration_rate, defense, damage, rotation_speed,
+              lock_delay, radar_range, radar_angle, missile_speed, missile_turn_rate, missile_lifetime, missile_damage
        from jet_types order by name`,
     )) as Array<{
       id: string;
@@ -81,6 +82,13 @@ describeOrSkip('Jet-types infrastructure (Postgres via testcontainers)', () => {
       defense: string;
       damage: string;
       rotation_speed: string;
+      lock_delay: string;
+      radar_range: string;
+      radar_angle: string;
+      missile_speed: string;
+      missile_turn_rate: string;
+      missile_lifetime: string;
+      missile_damage: string;
     }>;
 
     expect(rows).toHaveLength(3);
@@ -96,6 +104,13 @@ describeOrSkip('Jet-types infrastructure (Postgres via testcontainers)', () => {
     expect(Number(interceptor!.defense)).toBe(10);
     expect(Number(interceptor!.damage)).toBe(30);
     expect(Number(interceptor!.rotation_speed)).toBeCloseTo(6.0, 5);
+    expect(Number(interceptor!.lock_delay)).toBe(400);
+    expect(Number(interceptor!.radar_range)).toBe(550);
+    expect(Number(interceptor!.radar_angle)).toBe(25);
+    expect(Number(interceptor!.missile_speed)).toBe(380);
+    expect(Number(interceptor!.missile_turn_rate)).toBeCloseTo(5.0, 5);
+    expect(Number(interceptor!.missile_lifetime)).toBe(2500);
+    expect(Number(interceptor!.missile_damage)).toBe(60);
 
     const balanced = byName.get('Balanced');
     expect(balanced).toBeDefined();
@@ -105,6 +120,13 @@ describeOrSkip('Jet-types infrastructure (Postgres via testcontainers)', () => {
     expect(Number(balanced!.defense)).toBe(35);
     expect(Number(balanced!.damage)).toBe(45);
     expect(Number(balanced!.rotation_speed)).toBeCloseTo(4.5, 5);
+    expect(Number(balanced!.lock_delay)).toBe(600);
+    expect(Number(balanced!.radar_range)).toBe(500);
+    expect(Number(balanced!.radar_angle)).toBe(30);
+    expect(Number(balanced!.missile_speed)).toBe(350);
+    expect(Number(balanced!.missile_turn_rate)).toBeCloseTo(4.0, 5);
+    expect(Number(balanced!.missile_lifetime)).toBe(3000);
+    expect(Number(balanced!.missile_damage)).toBe(75);
 
     const heavy = byName.get('Heavy');
     expect(heavy).toBeDefined();
@@ -115,6 +137,13 @@ describeOrSkip('Jet-types infrastructure (Postgres via testcontainers)', () => {
     expect(Number(heavy!.defense)).toBe(60);
     expect(Number(heavy!.damage)).toBe(80);
     expect(Number(heavy!.rotation_speed)).toBeCloseTo(3.0, 5);
+    expect(Number(heavy!.lock_delay)).toBe(1000);
+    expect(Number(heavy!.radar_range)).toBe(450);
+    expect(Number(heavy!.radar_angle)).toBe(35);
+    expect(Number(heavy!.missile_speed)).toBe(300);
+    expect(Number(heavy!.missile_turn_rate)).toBeCloseTo(3.0, 5);
+    expect(Number(heavy!.missile_lifetime)).toBe(3500);
+    expect(Number(heavy!.missile_damage)).toBe(90);
   });
 
   it('JetTypeRepositoryAdapter.findAll maps the 3 seeded rows to domain aggregates', async () => {
@@ -125,10 +154,17 @@ describeOrSkip('Jet-types infrastructure (Postgres via testcontainers)', () => {
     const byName = new Map(jetTypes.map((j) => [j.name, j]));
     expect(byName.get('Interceptor')!.id).toBe(INTERCEPTOR_ID);
     expect(byName.get('Interceptor')!.maxSpeed.value).toBe(460);
+    expect(byName.get('Interceptor')!.lockDelay.value).toBe(400);
+    expect(byName.get('Interceptor')!.radarAngle.value).toBe(25);
+    expect(byName.get('Interceptor')!.missileDamage.value).toBe(60);
     expect(byName.get('Balanced')!.id).toBe(BALANCED_ID);
     expect(byName.get('Balanced')!.defense.value).toBe(35);
+    expect(byName.get('Balanced')!.lockDelay.value).toBe(600);
+    expect(byName.get('Balanced')!.missileSpeed.value).toBe(350);
     expect(byName.get('Heavy')!.id).toBe(HEAVY_ID);
     expect(byName.get('Heavy')!.damage.value).toBe(80);
+    expect(byName.get('Heavy')!.missileLifetime.value).toBe(3500);
+    expect(byName.get('Heavy')!.missileTurnRate.value).toBe(3.0);
   });
 
   it('JetTypeExists (adapter.exists) returns true for known ids and false for unknown', async () => {
@@ -155,10 +191,31 @@ describeOrSkip('Jet-types infrastructure (Postgres via testcontainers)', () => {
     expect(byName.get('Interceptor')!.maxSpeed).toBe(460);
     expect(byName.get('Interceptor')!.accelerationRate).toBeCloseTo(4.0, 5);
     expect(byName.get('Interceptor')!.rotationSpeed).toBeCloseTo(6.0, 5);
+    expect(byName.get('Interceptor')!.lockDelay).toBe(400);
+    expect(byName.get('Interceptor')!.radarRange).toBe(550);
+    expect(byName.get('Interceptor')!.radarAngle).toBe(25);
+    expect(byName.get('Interceptor')!.missileSpeed).toBe(380);
+    expect(byName.get('Interceptor')!.missileTurnRate).toBeCloseTo(5.0, 5);
+    expect(byName.get('Interceptor')!.missileLifetime).toBe(2500);
+    expect(byName.get('Interceptor')!.missileDamage).toBe(60);
     expect(byName.get('Balanced')!.id).toBe(BALANCED_ID);
     expect(byName.get('Balanced')!.rotationSpeed).toBeCloseTo(4.5, 5);
+    expect(byName.get('Balanced')!.lockDelay).toBe(600);
+    expect(byName.get('Balanced')!.radarRange).toBe(500);
+    expect(byName.get('Balanced')!.radarAngle).toBe(30);
+    expect(byName.get('Balanced')!.missileSpeed).toBe(350);
+    expect(byName.get('Balanced')!.missileTurnRate).toBeCloseTo(4.0, 5);
+    expect(byName.get('Balanced')!.missileLifetime).toBe(3000);
+    expect(byName.get('Balanced')!.missileDamage).toBe(75);
     expect(byName.get('Heavy')!.damage).toBe(80);
     expect(byName.get('Heavy')!.rotationSpeed).toBeCloseTo(3.0, 5);
+    expect(byName.get('Heavy')!.lockDelay).toBe(1000);
+    expect(byName.get('Heavy')!.radarRange).toBe(450);
+    expect(byName.get('Heavy')!.radarAngle).toBe(35);
+    expect(byName.get('Heavy')!.missileSpeed).toBe(300);
+    expect(byName.get('Heavy')!.missileTurnRate).toBeCloseTo(3.0, 5);
+    expect(byName.get('Heavy')!.missileLifetime).toBe(3500);
+    expect(byName.get('Heavy')!.missileDamage).toBe(90);
   });
 
   // --- Migration20260626000003_game_records_jet_type_fk: column + FK + default ---

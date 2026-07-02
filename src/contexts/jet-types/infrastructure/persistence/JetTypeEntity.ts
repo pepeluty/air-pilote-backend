@@ -43,4 +43,25 @@ export class JetTypeEntity {
 
   @Property()
   rotationSpeed!: number;
+
+  @Property()
+  lockDelay!: number;
+
+  @Property()
+  radarRange!: number;
+
+  @Property()
+  radarAngle!: number;
+
+  @Property()
+  missileSpeed!: number;
+
+  @Property()
+  missileTurnRate!: number;
+
+  @Property()
+  missileLifetime!: number;
+
+  @Property()
+  missileDamage!: number;
 }

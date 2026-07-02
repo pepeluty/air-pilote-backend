@@ -14,6 +14,13 @@ import { AccelerationRate } from '../../../domain/vo/AccelerationRate';
 import { CruiseSpeed } from '../../../domain/vo/CruiseSpeed';
 import { Damage } from '../../../domain/vo/Damage';
 import { Defense } from '../../../domain/vo/Defense';
+import { LockDelay } from '../../../domain/vo/LockDelay';
+import { MissileDamage } from '../../../domain/vo/MissileDamage';
+import { MissileLifetime } from '../../../domain/vo/MissileLifetime';
+import { MissileSpeed } from '../../../domain/vo/MissileSpeed';
+import { MissileTurnRate } from '../../../domain/vo/MissileTurnRate';
+import { RadarAngle } from '../../../domain/vo/RadarAngle';
+import { RadarRange } from '../../../domain/vo/RadarRange';
 import { RotationSpeed } from '../../../domain/vo/RotationSpeed';
 import { Speed } from '../../../domain/vo/Speed';
 import type { JetTypeRepository } from '../../ports/JetTypeRepository.port';
@@ -35,6 +42,13 @@ function seedJetTypes(): JetType[] {
       Defense.create(10),
       Damage.create(30),
       RotationSpeed.create(6.0),
+      LockDelay.create(400),
+      RadarRange.create(550),
+      RadarAngle.create(25),
+      MissileSpeed.create(380),
+      MissileTurnRate.create(5.0),
+      MissileLifetime.create(2500),
+      MissileDamage.create(60),
     ),
     JetType.create(
       BALANCED_ID,
@@ -45,6 +59,13 @@ function seedJetTypes(): JetType[] {
       Defense.create(35),
       Damage.create(45),
       RotationSpeed.create(4.5),
+      LockDelay.create(600),
+      RadarRange.create(500),
+      RadarAngle.create(30),
+      MissileSpeed.create(350),
+      MissileTurnRate.create(4.0),
+      MissileLifetime.create(3000),
+      MissileDamage.create(75),
     ),
     JetType.create(
       HEAVY_ID,
@@ -55,6 +76,13 @@ function seedJetTypes(): JetType[] {
       Defense.create(60),
       Damage.create(80),
       RotationSpeed.create(3.0),
+      LockDelay.create(1000),
+      RadarRange.create(450),
+      RadarAngle.create(35),
+      MissileSpeed.create(300),
+      MissileTurnRate.create(3.0),
+      MissileLifetime.create(3500),
+      MissileDamage.create(90),
     ),
   ];
 }
@@ -99,6 +127,13 @@ describe('ListJetTypes use case', () => {
     expect(interceptor!.defense.value).toBe(10);
     expect(interceptor!.damage.value).toBe(30);
     expect(interceptor!.rotationSpeed.value).toBe(6.0);
+    expect(interceptor!.lockDelay.value).toBe(400);
+    expect(interceptor!.radarRange.value).toBe(550);
+    expect(interceptor!.radarAngle.value).toBe(25);
+    expect(interceptor!.missileSpeed.value).toBe(380);
+    expect(interceptor!.missileTurnRate.value).toBe(5.0);
+    expect(interceptor!.missileLifetime.value).toBe(2500);
+    expect(interceptor!.missileDamage.value).toBe(60);
 
     const balanced = byName.get('Balanced');
     expect(balanced).toBeDefined();
@@ -108,6 +143,13 @@ describe('ListJetTypes use case', () => {
     expect(balanced!.defense.value).toBe(35);
     expect(balanced!.damage.value).toBe(45);
     expect(balanced!.rotationSpeed.value).toBe(4.5);
+    expect(balanced!.lockDelay.value).toBe(600);
+    expect(balanced!.radarRange.value).toBe(500);
+    expect(balanced!.radarAngle.value).toBe(30);
+    expect(balanced!.missileSpeed.value).toBe(350);
+    expect(balanced!.missileTurnRate.value).toBe(4.0);
+    expect(balanced!.missileLifetime.value).toBe(3000);
+    expect(balanced!.missileDamage.value).toBe(75);
 
     const heavy = byName.get('Heavy');
     expect(heavy).toBeDefined();
@@ -118,6 +160,13 @@ describe('ListJetTypes use case', () => {
     expect(heavy!.defense.value).toBe(60);
     expect(heavy!.damage.value).toBe(80);
     expect(heavy!.rotationSpeed.value).toBe(3.0);
+    expect(heavy!.lockDelay.value).toBe(1000);
+    expect(heavy!.radarRange.value).toBe(450);
+    expect(heavy!.radarAngle.value).toBe(35);
+    expect(heavy!.missileSpeed.value).toBe(300);
+    expect(heavy!.missileTurnRate.value).toBe(3.0);
+    expect(heavy!.missileLifetime.value).toBe(3500);
+    expect(heavy!.missileDamage.value).toBe(90);
   });
 
   it('returns an empty catalog when the repository has no rows (degenerate)', async () => {
