@@ -4,6 +4,8 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { defineConfig, UnderscoreNamingStrategy } from '@mikro-orm/postgresql';
 import { Migrator } from '@mikro-orm/migrations';
 import { IdentityModule } from './contexts/identity/infrastructure/nest-identity.module';
+import { GameRecordsModule } from './contexts/game-records/infrastructure/nest-game-records.module';
+import { JetTypesModule } from './contexts/jet-types/infrastructure/nest-jet-types.module';
 import { AuthGuard } from './shared/AuthGuard';
 
 /**
@@ -30,17 +32,20 @@ import { AuthGuard } from './shared/AuthGuard';
         dbName: process.env.PG_DB ?? 'air-pilote',
         user: process.env.PG_USER ?? 'postgres',
         password: process.env.PG_PASSWORD ?? 'postgres',
-        entities: ['./dist/contexts/**/*.entity.js'],
-        entitiesTs: ['./src/contexts/**/*.entity.ts'],
+        entities: ['./dist/**/contexts/**/*Entity.js'],
+        entitiesTs: ['./src/contexts/**/*Entity.ts'],
         namingStrategy: UnderscoreNamingStrategy,
         migrations: {
           path: './dist/migrations',
           pathTs: './src/migrations',
+          tableName: 'mikro_orm_migrations',
         },
         extensions: [Migrator],
       }),
     ),
     IdentityModule,
+    GameRecordsModule,
+    JetTypesModule,
   ],
   providers: [AuthGuard, { provide: APP_GUARD, useClass: AuthGuard }],
 })
